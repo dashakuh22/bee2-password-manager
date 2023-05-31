@@ -1,0 +1,26 @@
+server:
+  port: 8081
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 719601401931-pq7kss5t3mmjkj47f3j5if30o5crqg37.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - 'https://www.googleapis.com/auth/drive'
+              - 'https://www.googleapis.com/auth/userinfo.profile'
+              - 'https://www.googleapis.com/auth/userinfo.email'
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: mysecretpassword
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/postgres}

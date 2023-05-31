@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+    java:
+        image: maven:3.6.3-openjdk-17
+        depends_on:
+            - postgres
+        volumes:
+            - ./bee2-proj/bee2-password-manager-backend:/bee2
+        ports:
+            - 8081:8081
+        environment:
+            DB_URL: "jdbc:postgresql://postgres:5432/postgres"
+        command:
+            - /bin/sh
+            - -c
+            - |  
+                cd /bee2
+                mvn clean package
+                cd /bee2/target
+                java -jar bee2-password-manager.jar
+        networks:
+            - db
+            - web
+    
+    postgres:
+        image: postgres
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "mysecretpassword"
+        networks:
+            - db
+        expose:
+            - 3306
+            
+networks:
+  db:
+  web:

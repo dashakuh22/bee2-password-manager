@@ -1,0 +1,9 @@
+<div class="card">
+  <h5 class="card-header">File: <strong>{{prefix}}-password-{{idx + 1}}.pass</strong></h5>
+  <div class="card-body">
+    <p class="card-text">Save file to:</p>
+    <select class="form-select form-select mb-3" aria-label=".form-select-lg example" (change)="onChangeOption($event)">
+      <option *ngFor="let option of options; index as i" [value]="option" [selected]="i==0">{{option}}</option>
+    </select>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+<div class="container">
+
+  <div *ngIf="!isLoggedIn" class="row justify-content-center mt-3">
+    <div class="alert alert-warning" role="alert" style="max-width: 500px">
+      <strong>Вы не вошли в систему.</strong> Используйте форму входа в систему.
+    </div>
+  </div>
+
+
+  <div *ngIf="!isLoggedIn" class="container">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="card bg-secondary text-white" style="border-radius: 1rem;">
+          <div class="card-body p-5 text-center">
+            <div class="mb-md-4 mt-md-4">
+              <h2 class="fw-bold mb-2 text-uppercase">Вход в систему</h2>
+              <p class="text-white-50 mb-5">Введите логин и пароль</p>
+              <div class="form-outline form-white mb-4">
+                <input [(ngModel)]="login" type="text" id="typeLogin" class="form-control form-control-lg"/>
+                <label class="form-label" for="typeLogin">Логин</label>
+              </div>
+              <div class="form-outline form-white mb-4">
+                <input [(ngModel)]="password" type="password" id="typePassword" class="form-control form-control-lg"/>
+                <label class="form-label" for="typePassword">Пароль</label>
+              </div>
+              <button class="btn btn-outline-light btn-lg px-5" type="submit" (click)="handleLogin()">Вход</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isLoggedIn" class="container mt-3">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="card bg-secondary text-white" style="border-radius: 1rem;">
+          <div class="card-body p-1 text-center">
+            <div class="mb-md-1 mt-md-1">
+              <h2 class="fw-bold mb-2 text-uppercase">Секретный код</h2>
+              <div class="form-outline form-white mb-3">
+                <input [value]="masterKey" readonly type="text" class="form-control form-control-lg text-center"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isLoggedIn" class="container mt-3">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="card bg-secondary text-white" style="border-radius: 1rem;">
+          <div class="card-body p-1 text-center">
+            <div class="mb-md-1 mt-md-1">
+              <h2 class="fw-bold mb-2 text-uppercase">Сторонние сервисы</h2>
+              <div class="form-outline form-white text-start d-block ms-4">
+                <div class="form-check form-switch col align-self-center">
+                  <input class="form-check-input" [(ngModel)]="googleDriveModel.active" (change)="googleDriveChange()" type="checkbox" id="googleDrive">
+                  <label class="form-check-label" for="googleDrive">Google drive</label>
+                </div>
+                <div class="form-check form-switch col align-self-center">
+                  <input class="form-check-input" [(ngModel)]="localDriveModel.active" (change)="localDriveChanged()" type="checkbox" id="localDrive">
+                  <label class="form-check-label" for="localDrive">Локальное хранилище</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>

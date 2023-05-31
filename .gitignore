@@ -1,0 +1,14 @@
+index.js
+index.wasm
+libbee2cmd.a
+libbee2_static.a
+bee2/**
+bee2make/**
+website/**
+bee2-proj/bee2-password-manager-backend/target/**
+bee2-proj/bee2-password-manager-master-frontend/dist/**
+bee2-proj/bee2-password-manager-master-frontend/node_modules/**
+bee2-proj/bee2-password-manager-master-frontend/.angular/**
+bee2-proj/bee2-password-manager-extension/dist/**
+bee2-proj/bee2-password-manager-extension/node_modules/**
+bee2-proj/bee2-password-manager-extension/.angular/**

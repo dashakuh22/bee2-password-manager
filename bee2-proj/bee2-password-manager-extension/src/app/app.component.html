@@ -1,0 +1,119 @@
+<div *ngIf="errorMessage" class="container-sm p-1 mt-1">
+  <div class="alert alert-danger" role="alert">
+    <strong>Warning: </strong> {{errorMessage}}
+  </div>
+</div>
+
+<div *ngIf="!isActivated" class="container-sm mt-1 p-1">
+  <div class="mb-3 row">
+    <label for="secret-key" class="form-label">Secret key</label>
+    <input type="text" class="form-control text-center" id="secret-key" [(ngModel)]="secretKey">
+    <button class="btn btn-primary mt-2" (click)="activatePlugin()">Activate</button>
+  </div>
+</div>
+
+<div *ngIf="isActivated" class="container-sm mt-2 p-1">
+  <div class="mb-3 row">
+    <label for="password" class="form-label">Password seed</label>
+    <input type="text" class="form-control text-center" id="password" readonly [(ngModel)]="password">
+    <div class="d-flex mt-1 p-0 gap-1 justify-content-evenly">
+      <button class="btn btn-primary w-50" (click)="generatePasswordSeed(); generatePassword()">Generate</button>
+      <button class="btn btn-primary w-50" (click)="clearPassword();">Clear</button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="password" class="card container p-1">
+  <div class="card-body">
+    <div class="container-sm p-2 mt-1">
+      <div class="row" hidden>
+        <div class="d-flex mt-1 p-0 gap-1 justify-content-evenly">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="useSymbols"
+                   [(ngModel)]="passwordSettings.useSymbols" (change)="generatePassword()">
+            <label class="form-check-label" for="useSymbols">
+              Use symbols
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="useDigits"
+                   [(ngModel)]="passwordSettings.useDigits" (change)="generatePassword()">
+            <label class="form-check-label" for="useDigits">
+              Use digits
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="useSpecialChars"
+                   [(ngModel)]="passwordSettings.useSpecialChars" (change)="generatePassword()">
+            <label class="form-check-label" for="useSpecialChars">
+              Use special chars
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="container-sm" hidden>
+        <input type="range" class="form-range mt-3" min="10" max="32" [(ngModel)]="passwordSettings.len" id="len"
+               (change)="generatePassword()">
+        <label for="len" class="form-label text-center row d-flex justify-content-center">Password length (10 ..
+          32)<strong>[{{passwordSettings.len}}]</strong></label>
+      </div>
+      <div class="container-sm" hidden>
+        <input class="form-control form-control-lg text-center" type="text" placeholder="Password"
+               aria-label=".form-control-lg example" [value]="generatedPassword" readonly>
+      </div>
+      <div *ngIf="files.length > 0" class="container mt-3">
+        <div class="row">
+          <app-file-card class="col"
+                         *ngFor="let file of files; index as i"
+                         [fileData]="file.data"
+                         [options]="optionsToSave"
+                         [prefix]="password.substring(0, 4)"
+                         [idx]="i"
+                         (onChange)="onCardChange($event)"
+          ></app-file-card>
+        </div>
+      </div>
+      <div class="container-sm mt-3 p-2">
+        <div class="row">
+          <button class="btn btn-primary" (click)="saveClickProcess()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isActivated" class="container-sm mt-1 p-1">
+  <div class="card row">
+    <div class="card-header">
+      Recent files <button class="btn-sm btn-secondary ms-2" (click)="loadRecentFiles()">Refresh</button>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item d-flex justify-content-around" *ngFor="let file of recentFiles.files">
+        <strong class="col-2">Seed : {{file.filename}}...</strong>
+        <span class="text-muted col-3">File index <strong>{{file.index}}</strong></span>
+        <span class="text-muted col-3">Type <strong>{{file.type}}</strong></span>
+        <div *ngIf="file.type == 'google'" class="col-4">
+          <div class="row ps-2 pe-2">
+          <button class="btn btn-primary" (click)="loadRecentFileGoogle(file)">Select</button>
+          </div>
+        </div>
+        <div *ngIf="file.type == 'local'" class="col-4">
+          <input class="form-control" type="file" [accept]="'.pass'"
+                 (change)="loadRecentFileLocal(file, $event)" placeholder="Load">
+        </div>
+      </li>
+    </ul>
+    <button *ngIf="fileLoaded" class="btn btn-danger mt-2" (click)="loadNewSeed()">Load Seed</button>
+  </div>
+</div>
+
+<div *ngIf="isActivated" class="container-sm mt-1 p-1">
+  <div class="row d-flex aligns-items-center justify-content-center">
+    <div class="col-auto d-flex" style="align-items: center">
+      Plugin activated for <strong class="text-primary ms-1">{{userLogin}}</strong>.
+    </div>
+    <div class="col-auto">
+      <button class="btn btn-secondary" (click)="resetPlugin()">Reset</button>
+    </div>
+  </div>
+</div>

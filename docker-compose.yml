@@ -1,0 +1,95 @@
+version: "3.9"
+
+services:
+    emsdk:
+        image: "emscripten/emsdk"
+        command:
+            - /bin/sh
+            - -c
+            - |
+                apt-get -y install git
+                rm -rf bee2 bee2make
+                rm libbee2_static.a libbee2cmd.a bee2tools.js
+                git clone https://github.com/agievich/bee2.git
+                cp /src/patch/core/* /src/bee2/cmd/core
+                cp /src/patch/include/cmd.h /src/bee2/include/bee2/cmd.h
+                cp /src/patch/CMakeLists.txt /src/bee2/cmd/CMakeLists.txt
+                cp /src/patch/rng.c /src/bee2/src/core/rng.c
+                emcmake cmake -S bee2 -B bee2make -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTS=OFF -DBUILD_DOC=OFF -DBUILD_CMD=ON
+                emmake make -C bee2make
+                cp /src/bee2make/src/libbee2_static.a /src
+                cp /src/bee2make/cmd/libbee2cmd.a /src
+                emcc /src/**/*.c libbee2_static.a libbee2cmd.a -I bee2/include -o index.js -sEXPORTED_RUNTIME_METHODS=ccall,cwrap,FS -sEXPORTED_FUNCTIONS="['_apduTest','_bakeDemo','_PwdGenShare','_PwdReadShare']"
+                cp /src/index.js /src/bee2-proj/bee2-password-manager-extension/src/index.js
+                cp /src/index.wasm /src/bee2-proj/bee2-password-manager-extension/src/index.wasm
+        volumes:
+            - .:/src
+    
+            
+    build_node_1:
+        depends_on:
+            - emsdk
+        image: "node:19.9.0"
+        volumes:
+            - ./bee2-proj/bee2-password-manager-extension:/bee2
+        command:
+            - /bin/sh
+            - -c
+            - |  
+                cd /bee2
+                yarn install
+                yarn build
+                
+    
+    build_node_2:
+        image: "node:19.9.0"
+        volumes:
+            -   ./bee2-proj/bee2-password-manager-master-frontend:/bee2
+        command:
+            - /bin/sh
+            - -c
+            - |  
+                cp index.js /bee2/src/index.js
+                cp index.wasm /bee2/src/index.wasm
+                cd /bee2
+                yarn install
+                yarn build
+    
+    java:
+        image: "maven:3.6.3-openjdk-17"
+        depends_on:
+            - postgres
+        volumes:
+            - ./bee2-proj/bee2-password-manager-backend:/bee2
+        ports:
+            - 8081:8081
+        environment:
+            DB_URL: "jdbc:postgresql://postgres:5432/postgres"
+        command:
+            - /bin/sh
+            - -c
+            - |  
+                cd /bee2
+                mvn clean package
+                cd /bee2/target
+                java -jar bee2-password-manager.jar
+        networks:
+            - db
+            - web
+    
+    postgres:
+        image: postgres
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "mysecretpassword"
+        networks:
+            - db
+        expose:
+            - 5432
+            
+            
+networks:
+  db:
+  web:
